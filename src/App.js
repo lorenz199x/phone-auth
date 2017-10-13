@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Button, Text, TextInput, Image, ListView } from 'react-native';
-import firebase from './firebase';
+import firebase from 'react-native-firebase';
 
 const successImageUri = 'https://cdn.pixabay.com/photo/2015/06/09/16/12/icon-803718_1280.png';
 
@@ -12,21 +12,13 @@ export default class PhoneAuthTest extends Component {
       user: null,
       message: '',
       codeInput: '',
-      phoneNumber: '+639365765690',
+      phoneNumber: '+639',
       confirmResult: null,
       loggedIn: null 
     };
   }
 
   componentDidMount() {
-      // firebase.initializeApp({
-      //       apiKey: "AIzaSyC8JTU-B6osMdrLbLAoaE04Wxim6hiwGkI",
-      //       authDomain: "test-ef9b2.firebaseapp.com",
-      //       databaseURL: "https://test-ef9b2.firebaseio.com",
-      //       projectId: "test-ef9b2",
-      //       storageBucket: "test-ef9b2.appspot.com",
-      //       messagingSenderId: "992146345978"
-      //   });
 
     this.unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -37,7 +29,7 @@ export default class PhoneAuthTest extends Component {
           user: null,
           message: '',
           codeInput: '',
-          phoneNumber: '+639365765690',
+          phoneNumber: '+639',
           confirmResult: null,
         });
       }
@@ -53,12 +45,11 @@ export default class PhoneAuthTest extends Component {
     this.setState({ message: 'Sending code ...' });
 
     firebase.auth().signInWithPhoneNumber(phoneNumber)
-      .then(confirmResult => this.setState({ confirmResult, message: 'Code has been sent!' }))
-      .catch(error => console.log('adae', error.message));
+     .then(confirmResult => this.setState({ confirmResult, message: 'Code has been sent!' }))
+       .catch(error => this.setState({ message: `Sign In With Phone Number Error: ${error.message}` }))
+
   };
-//his.setState({ message: `Sign In With Phone Number Error: ${error.message}` }
-      
-     // )
+
   confirmCode = () => {
     const { codeInput, confirmResult } = this.state;
 
@@ -99,7 +90,7 @@ export default class PhoneAuthTest extends Component {
     if (!!message.length) return null;
     
     return (
-      <Text style={{ padding: 5, backgroundColor: '#78a1e2', color: '#fff', height: 40 }}>{message}</Text>
+      <Text style={{ padding: 5, backgroundColor: '#78a1e2', color: '#fff', height: 60 }}>{message}</Text>
     );
   }
 
@@ -126,29 +117,13 @@ export default class PhoneAuthTest extends Component {
     
     return (
         <View>
-            {/*<View>
-                
-            </View>*/}
-
             <View >
-              {this.renderMessage()}
+                {this.renderMessage()}
                 {!user && !confirmResult && this.renderPhoneNumberInput()}
             </View>
 
             <View>
-                 {/*{!user && confirmResult && */}
-                <View style={{ marginTop: 25, padding: 25 }}>
-                        <Text>Enter verification code below:</Text>
-                    <TextInput
-                        autoFocus
-                        style={{ height: 40, marginTop: 15, marginBottom: 15 }}
-                        onChangeText={value => this.setState({ codeInput: value })}
-                        placeholder={'Code ... '}
-                        value={codeInput}
-                    />
-                    <Button title="Confirm Code" color="#841584" onPress={this.confirmCode} />
-                </View>
-                {/*}*/}
+                 {!user && confirmResult && this.renderVerificationCodeInput()}
             </View>
 
             <View>
@@ -172,5 +147,3 @@ export default class PhoneAuthTest extends Component {
         );
     }
 }
-
-    // console.log('LOG HERE...', phoneNumber);
